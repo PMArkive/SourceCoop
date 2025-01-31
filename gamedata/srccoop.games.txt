@@ -642,6 +642,12 @@
 				"callconv"	"cdecl"
 				"return"	"cbaseentity"
 			}
+			"CheckEmitReasonablePhysicsSpew"
+			{
+				"signature"	"CheckEmitReasonablePhysicsSpew"
+				"callconv"	"cdecl"
+				"return"	"bool"
+			}
 			"CAI_GoalEntity::ResolveNames"
 			{
 				"signature"	"CAI_GoalEntity::ResolveNames"
@@ -950,6 +956,10 @@
 			{
 				"windows"	"\xA1\x2A\x2A\x2A\x2A\x8B\x40\x14\x83\xF8\x01\x7E\x2A\xA1\x2A\x2A\x2A\x2A"
 				"linux" 	"@_Z19UTIL_GetLocalPlayerv"
+			}
+			"CheckEmitReasonablePhysicsSpew"
+			{
+				"linux" 	"@_Z30CheckEmitReasonablePhysicsSpewv"
 			}
 			"CAI_GoalEntity::ResolveNames" // void CAI_GoalEntity::ResolveNames()
 			{

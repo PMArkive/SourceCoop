@@ -118,6 +118,8 @@ void LoadGameData()
 	LoadDHookDetour(pGameConfig, hkTauFireBeam, "CWeapon_Tau::FireBeam", Hook_TauFireBeam, Hook_TauFireBeamPost);
 	LoadDHookDetour(pGameConfig, hkParamsManagerInitInstances, "CParamsManager::InitInstances", Hook_CParamsManager_InitInstances);
 	#endif
+
+	LoadDHookDetour(pGameConfig, hkCheckEmitReasonablePhysicsSpew, "CheckEmitReasonablePhysicsSpew", _, Hook_CheckEmitReasonablePhysicsSpew);
 	
 	#if defined PLAYERPATCH_SUIT_SOUNDS
 	LoadDHookDetour(pGameConfig, hkSetSuitUpdate, "CBasePlayer::SetSuitUpdate", Hook_SetSuitUpdate, Hook_SetSuitUpdatePost);
@@ -996,15 +998,41 @@ public void Hook_EntitySpawnPost(int iEntIndex)
 			#endif
 
 			// fix linux physics crashes
-			static char szModel[PLATFORM_MAX_PATH];
-			if (pEntity.GetModelName(szModel, sizeof(szModel)) && strncmp(szModel, "models/gibs/humans/", 19) == 0)
+			// if (pEntity.GetMoveType() == MOVETYPE_VPHYSICS)
 			{
-				SDKHook(iEntIndex, SDKHook_OnTakeDamage, Hook_NoDmg);
+				SDKHook(iEntIndex, SDKHook_VPhysicsUpdate, Hook_VPhysicsUpdate);
+				SDKHook(iEntIndex, SDKHook_VPhysicsUpdatePost, Hook_VPhysicsUpdatePost);
 			}
 		}
 		#endif // SRCCOOP_BLACKMESA
 
 		CoopManager.EntitySpawnPost(pEntity);
+	}
+}
+
+bool g_bVphysicsUpdateInvalid;
+
+void Hook_VPhysicsUpdate(int iEntIndex)
+{
+	g_bVphysicsUpdateInvalid = false;
+}
+
+MRESReturn Hook_CheckEmitReasonablePhysicsSpew(DHookReturn hReturn)
+{
+	g_bVphysicsUpdateInvalid = true;
+	return MRES_Ignored;
+}
+
+void Hook_VPhysicsUpdatePost(int iEntIndex)
+{
+	if (g_bVphysicsUpdateInvalid)
+	{
+		CBaseEntity pEntity = CBaseEntity(iEntIndex);
+		float vecOrigin[3];
+		float vecAngles[3];
+		vecAngles[0] = GetURandomFloat();
+		pEntity.GetAbsOrigin(vecOrigin);
+		TeleportEntity(iEntIndex, vecOrigin, vec3_origin);
 	}
 }
 

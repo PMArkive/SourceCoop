@@ -131,6 +131,8 @@ DynamicDetour hkTauFireBeam;
 DynamicDetour hkParamsManagerInitInstances;
 #endif
 
+DynamicDetour hkCheckEmitReasonablePhysicsSpew;
+
 #if defined PLAYERPATCH_SUIT_SOUNDS
 DynamicDetour hkSetSuitUpdate;
 #endif
